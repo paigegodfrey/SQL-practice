@@ -2,7 +2,7 @@
 
 CREATE TABLE bands (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
+  name TEXT NOT NULL,
 );
 
 CREATE TABLE albums (
@@ -22,12 +22,10 @@ CREATE TABLE song
 );
 
 -- 2. Select only the names of all the bands
-SELECT name AS 'Band Name'
-FROM bands;
+SELECT name AS 'Band Name' FROM bands;
 
 -- 3. Select the oldest album
-SELECT *
-FROM albums
+SELECT * FROM albums
 WHERE release_year IS NOT NULL
 ORDER BY release_year
 LIMIT 1;
@@ -37,7 +35,7 @@ LIMIT 1;
 SELECT DISTINCT name AS 'Band Name' FROM b AS bands
 JOIN albums AS a ON b.id = a.band_id;
 
-/* If bands do not have a unique name then use this query */
+/* If bands do not have a unique name */
 SELECT name AS 'Band Name' FROM bands AS b
 JOIN albums AS a ON b.id = a.band_id
 GROUP BY a.band_id;
@@ -62,7 +60,8 @@ LIMIT 1;
 
 -- 7. Update the release year of the album with no release year
 /* This is the query used to get the id */
-SELECT id FROM albums WHERE release_year IS NULL;
+SELECT id FROM albums 
+WHERE release_year IS NULL;
 
 UPDATE albums
 SET release_year = 1986
