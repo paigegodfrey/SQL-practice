@@ -2,7 +2,7 @@
 
 CREATE TABLE bands (
   id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,
 );
 
 CREATE TABLE albums (
@@ -31,16 +31,9 @@ ORDER BY release_year
 LIMIT 1;
 
 -- 4. Get all bands that have albums
-/* This assummes all bands have a unique name */
 SELECT DISTINCT name AS 'Band Name'
 FROM bands AS b
 JOIN albums AS a ON b.id = a.band_id;
-
-/* If bands do not have a unique name */
-SELECT name AS 'Band Name'
-FROM bands AS b
-JOIN albums AS a ON b.id = a.band_id
-GROUP BY a.band_id;
 
 -- 5. Get all bands that have no albums
 SELECT name AS 'Band Name'
@@ -61,20 +54,44 @@ ORDER BY Duration DESC
 LIMIT 1; 
 
 -- 7. Update the release year of the album with no release year
-/* This is the query used to get the id */
-SELECT * FROM albums
-WHERE release_year IS NULL;
-
 UPDATE albums
 SET release_year = 1986
-WHERE id = 4;
+WHERE release_year IS NULL;
 
 -- 8. Insert a record for your favorite band and one of their albums
- 
+INSERT INTO bands (name)
+VALUES 'The Used'; 
+
+/* This is the query used to get the id of the band just added */
+SELECT id FROM bands
+ORDER BY id DESC 
+LIMIT 1;
+
+INSERT INTO albums (name, release_year, band_id)
+VALUES ('In Love and Death', 2004, 8);
+
 -- 9. Delete the and and album you added in #8
+DELETE FROM bands
+WHERE id = 8;
+-- on delete cascade handles album table
 
 -- 10. Get the average length of all songs
+SELECT AVG(length) AS 'Average Song Duration' from songs;
 
 -- 11. Select the longest song off each album
+SELECT 
+  name AS 'Album', 
+  release_year AS 'Release Year', 
+  MAX(s.length) AS 'Duration'
+FROM albums
+JOIN songs AS s ON a.id = s.album_id
+GROUP BY s.album_id;
 
 -- 12. Get the number of songs for each band
+SELECT 
+  b.name AS 'Band', 
+  COUNT(s.id) AS 'Number of Songs'
+FROM bands AS b
+JOIN albums AS a ON b.id = a.band_id
+JOIN songs AS s ON a.id = s.album_id
+GROUP BY a.band_id;
